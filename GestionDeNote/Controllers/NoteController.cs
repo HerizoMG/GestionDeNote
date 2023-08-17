@@ -9,22 +9,26 @@ namespace GestionDeNote.Controllers;
 [ApiController]
 [Route("[Controller]")]
     
-public class PossedderController : ControllerBase
+public class NoteController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
 
-    public PossedderController(ApplicationDbContext context)
+    public NoteController(ApplicationDbContext context)
     {
         _context = context;
     }
     
 
     [HttpGet]
-    public ActionResult<IEnumerable<Etudiant>> GetNoteEtudiant()
+    public ActionResult<IEnumerable<Note>> GetNoteEtudiant()
     {
         if (_context.Notes != null)
         {
-            var noteEtudiant = _context.Notes.Include(e => e.trimestres).ToList();
+            var noteEtudiant = _context.Notes
+                .Include(e => e.Etudiant)
+                .Include(n=>n.Matiere)
+                .Include(a=>a.AnneeScolaire)
+                .ToList();
             return Ok(noteEtudiant);
         }
 
@@ -58,21 +62,26 @@ public class PossedderController : ControllerBase
 
         // Recherche de l'étudiant par numéro de matricule
         
-        var etudiant =_context.Etudiants?.Find(id);
+        var etudiant =_context.Etudiants
+            .Include(e=>e.Classe)
+            .Include(e=>e.Serie)
+            .FirstOrDefault(e=>e.matricule == id);
+        
         if (etudiant == null)
         {
             return NotFound("Étudiant non trouvé avec le matricule spécifié.");
         }
         
         // Ajout de la note à l'étudiant
+
         
         var note = new Note
         {
             idNote = notes.idNote,
             matricule = etudiant.matricule,
-            num_matiere = notes.num_matiere,
-            numTrimestre = notes.numTrimestre,
-            note = notes.note
+            idMatiere = notes.idMatiere,
+            note = notes.note,
+            coefficient = notes.coefficient
         };
         
         _context.Notes?.Add(note);

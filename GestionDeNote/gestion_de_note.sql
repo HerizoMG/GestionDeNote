@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : jeu. 17 août 2023 à 07:26
+-- Généré le : jeu. 17 août 2023 à 23:36
 -- Version du serveur : 10.4.24-MariaDB
 -- Version de PHP : 8.1.6
 
@@ -24,22 +24,33 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `annees`
+--
+
+CREATE TABLE `annees` (
+                          `idAnnee` int(5) NOT NULL,
+                          `annee` varchar(15) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Structure de la table `classes`
 --
 
 CREATE TABLE `classes` (
-  `ID_classe` varchar(10) NOT NULL,
-  `niveau` varchar(35) DEFAULT NULL
+                           `idClasse` int(5) NOT NULL,
+                           `niveau` varchar(35) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Déchargement des données de la table `classes`
 --
 
-INSERT INTO `classes` (`ID_classe`, `niveau`) VALUES
-('1', 'Seconde'),
-('2', 'Premiere'),
-('3', 'Terminale');
+INSERT INTO `classes` (`idClasse`, `niveau`) VALUES
+                                                 (1, 'Seconde'),
+                                                 (2, 'Premiere'),
+                                                 (3, 'Terminale');
 
 -- --------------------------------------------------------
 
@@ -48,14 +59,23 @@ INSERT INTO `classes` (`ID_classe`, `niveau`) VALUES
 --
 
 CREATE TABLE `etudiants` (
-  `num_matricule` varchar(15) NOT NULL,
-  `nom` varchar(50) DEFAULT NULL,
-  `prenoms` varchar(50) DEFAULT NULL,
-  `adresse` varchar(30) DEFAULT NULL,
-  `mail` varchar(48) DEFAULT NULL,
-  `num_serie` varchar(10) NOT NULL,
-  `ID_classe` varchar(10) NOT NULL
+                             `matricule` varchar(15) NOT NULL,
+                             `nom` varchar(50) NOT NULL,
+                             `prenoms` varchar(50) NOT NULL,
+                             `adresse` varchar(30) NOT NULL,
+                             `mail` varchar(40) NOT NULL,
+                             `idClasse` int(5) NOT NULL,
+                             `numSerie` int(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Déchargement des données de la table `etudiants`
+--
+
+INSERT INTO `etudiants` (`matricule`, `nom`, `prenoms`, `adresse`, `mail`, `idClasse`, `numSerie`) VALUES
+                                                                                                       ('1', 'hasina', 'kely', 'ihosy', 'bara@gmail.com', 3, 1),
+                                                                                                       ('2', 'string', 'string', 'string', 'string', 2, 2),
+                                                                                                       ('3', 'string', 'string', 'string', 'string', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -64,29 +84,35 @@ CREATE TABLE `etudiants` (
 --
 
 CREATE TABLE `matieres` (
-  `num_matiere` varchar(35) NOT NULL,
-  `nom_matiere` varchar(35) DEFAULT NULL,
-  `coefficient` varchar(2) DEFAULT NULL
+                            `idMatiere` int(5) NOT NULL,
+                            `nomMatiere` varchar(15) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Déchargement des données de la table `matieres`
---
-
-INSERT INTO `matieres` (`num_matiere`, `nom_matiere`, `coefficient`) VALUES
-('2', NULL, '3');
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `posseders`
+-- Structure de la table `notes`
 --
 
-CREATE TABLE `posseders` (
-  `num_matricule` varchar(15) NOT NULL,
-  `num_matiere` varchar(35) NOT NULL,
-  `num_trimestre` varchar(3) NOT NULL,
-  `note` varchar(10) DEFAULT NULL
+CREATE TABLE `notes` (
+                         `idNote` int(5) NOT NULL,
+                         `note` double NOT NULL,
+                         `coefficient` int(5) NOT NULL,
+                         `matricule` varchar(15) NOT NULL,
+                         `idMatiere` int(5) NOT NULL,
+                         `idAnneeScolaire` int(5) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `periodes`
+--
+
+CREATE TABLE `periodes` (
+                            `idAnneeScolaire` int(5) NOT NULL,
+                            `idAnnee` int(5) NOT NULL,
+                            `numTrimestre` int(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -96,22 +122,17 @@ CREATE TABLE `posseders` (
 --
 
 CREATE TABLE `series` (
-  `num_serie` varchar(10) NOT NULL,
-  `nom_serie` varchar(40) DEFAULT NULL
+                          `numSerie` int(5) NOT NULL,
+                          `nomSerie` varchar(15) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Déchargement des données de la table `series`
 --
 
-INSERT INTO `series` (`num_serie`, `nom_serie`) VALUES
-('1', 'A1'),
-('2', 'A2'),
-('3', 'C'),
-('4', 'D'),
-('5', 'L'),
-('6', 'S'),
-('7', 'OSE');
+INSERT INTO `series` (`numSerie`, `nomSerie`) VALUES
+                                                  (1, 'A1'),
+                                                  (2, 'A2');
 
 -- --------------------------------------------------------
 
@@ -120,9 +141,8 @@ INSERT INTO `series` (`num_serie`, `nom_serie`) VALUES
 --
 
 CREATE TABLE `trimestres` (
-  `ID_annee_scolaire` varchar(20) DEFAULT NULL,
-  `num_trimestre` varchar(3) NOT NULL,
-  `nom_trimestre` varchar(40) DEFAULT NULL
+                              `numTrimestre` int(5) NOT NULL,
+                              `nomTrimestre` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -130,44 +150,59 @@ CREATE TABLE `trimestres` (
 --
 
 --
+-- Index pour la table `annees`
+--
+ALTER TABLE `annees`
+    ADD PRIMARY KEY (`idAnnee`);
+
+--
 -- Index pour la table `classes`
 --
 ALTER TABLE `classes`
-  ADD PRIMARY KEY (`ID_classe`);
+    ADD PRIMARY KEY (`idClasse`);
 
 --
 -- Index pour la table `etudiants`
 --
 ALTER TABLE `etudiants`
-  ADD PRIMARY KEY (`num_matricule`),
-  ADD KEY `ID_classe` (`ID_classe`),
-  ADD KEY `num_serie` (`num_serie`);
+    ADD PRIMARY KEY (`matricule`),
+  ADD KEY `idClasse` (`idClasse`),
+  ADD KEY `numSerie` (`numSerie`);
 
 --
 -- Index pour la table `matieres`
 --
 ALTER TABLE `matieres`
-  ADD PRIMARY KEY (`num_matiere`);
+    ADD PRIMARY KEY (`idMatiere`);
 
 --
--- Index pour la table `posseders`
+-- Index pour la table `notes`
 --
-ALTER TABLE `posseders`
-  ADD PRIMARY KEY (`num_matricule`,`num_matiere`,`num_trimestre`),
-  ADD KEY `num_matiere` (`num_matiere`),
-  ADD KEY `num_trimestre` (`num_trimestre`);
+ALTER TABLE `notes`
+    ADD PRIMARY KEY (`idNote`),
+  ADD KEY `matricule` (`matricule`),
+  ADD KEY `idAnneeScolaire` (`idAnneeScolaire`),
+  ADD KEY `idMatiere` (`idMatiere`);
+
+--
+-- Index pour la table `periodes`
+--
+ALTER TABLE `periodes`
+    ADD PRIMARY KEY (`idAnneeScolaire`),
+  ADD KEY `idAnnee` (`idAnnee`),
+  ADD KEY `numTrimestre` (`numTrimestre`);
 
 --
 -- Index pour la table `series`
 --
 ALTER TABLE `series`
-  ADD PRIMARY KEY (`num_serie`);
+    ADD PRIMARY KEY (`numSerie`);
 
 --
 -- Index pour la table `trimestres`
 --
 ALTER TABLE `trimestres`
-  ADD PRIMARY KEY (`num_trimestre`);
+    ADD PRIMARY KEY (`numTrimestre`);
 
 --
 -- Contraintes pour les tables déchargées
@@ -177,16 +212,24 @@ ALTER TABLE `trimestres`
 -- Contraintes pour la table `etudiants`
 --
 ALTER TABLE `etudiants`
-  ADD CONSTRAINT `etudiants_ibfk_1` FOREIGN KEY (`ID_classe`) REFERENCES `classes` (`ID_classe`),
-  ADD CONSTRAINT `etudiants_ibfk_2` FOREIGN KEY (`num_serie`) REFERENCES `series` (`num_serie`);
+    ADD CONSTRAINT `etudiants_ibfk_1` FOREIGN KEY (`idClasse`) REFERENCES `classes` (`idClasse`),
+  ADD CONSTRAINT `etudiants_ibfk_2` FOREIGN KEY (`numSerie`) REFERENCES `series` (`numSerie`);
 
 --
--- Contraintes pour la table `posseders`
+-- Contraintes pour la table `notes`
 --
-ALTER TABLE `posseders`
-  ADD CONSTRAINT `posseders_ibfk_1` FOREIGN KEY (`num_matricule`) REFERENCES `etudiants` (`num_matricule`),
-  ADD CONSTRAINT `posseders_ibfk_2` FOREIGN KEY (`num_matiere`) REFERENCES `matieres` (`num_matiere`),
-  ADD CONSTRAINT `posseders_ibfk_3` FOREIGN KEY (`num_trimestre`) REFERENCES `trimestres` (`num_trimestre`);
+ALTER TABLE `notes`
+    ADD CONSTRAINT `notes_ibfk_1` FOREIGN KEY (`matricule`) REFERENCES `etudiants` (`matricule`),
+  ADD CONSTRAINT `notes_ibfk_2` FOREIGN KEY (`idMatiere`) REFERENCES `matieres` (`idMatiere`),
+  ADD CONSTRAINT `notes_ibfk_3` FOREIGN KEY (`idAnneeScolaire`) REFERENCES `periodes` (`idAnneeScolaire`),
+  ADD CONSTRAINT `notes_ibfk_4` FOREIGN KEY (`idMatiere`) REFERENCES `matieres` (`idMatiere`);
+
+--
+-- Contraintes pour la table `periodes`
+--
+ALTER TABLE `periodes`
+    ADD CONSTRAINT `periodes_ibfk_1` FOREIGN KEY (`idAnnee`) REFERENCES `annees` (`idAnnee`),
+  ADD CONSTRAINT `periodes_ibfk_2` FOREIGN KEY (`numTrimestre`) REFERENCES `trimestres` (`numTrimestre`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

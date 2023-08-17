@@ -15,6 +15,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<Note>? Notes { get; set; }
     public DbSet<Trimestre>? Trimestres { get; set; }
     public DbSet<Matiere>? Matieres { get; set; }
+    public DbSet<Annee>? Annees { get; set; }
+    public DbSet<Periode>? Periodes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -25,6 +27,8 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<Classe>().HasKey(c => new { c.idClasse });
         modelBuilder.Entity<Serie>().HasKey(s => new { s.numSerie });
         modelBuilder.Entity<Trimestre>().HasKey(t => new { t.numTrimestre });
+        modelBuilder.Entity<Periode>().HasKey(t => new { t.idAnneeScolaire });
+        modelBuilder.Entity<Annee>().HasKey(t => new { t.idAnnee });
     }
 }
 
