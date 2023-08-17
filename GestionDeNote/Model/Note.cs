@@ -6,19 +6,22 @@ namespace GestionDeNote.Model;
 public class Note
 {
     [Key]
-    public string id_note { get; set; }
-    public string num_matricule { get; set; }
-    public string num_matiere { get; set; }
-    public string num_trimestre { get; set; }
-    public string note { get; set; }
+    public int idNote { get; set; }
+    public string matricule { get; set; }
+    public int idMatiere { get; set; }
+    
+    public int coefficient { get; set; }
+    public double note { get; set; }
+    
+    public int idAnneeScolaire { get; set; }
 
-    [ForeignKey("num_matricule")]
-    public Etudiant etudiant { get; set; }
+    [ForeignKey("matricule")]
+    public Etudiant? Etudiant { get; set; }
     
-    [ForeignKey("num_matiere")]
-    public Matiere matiere { get; set; }
+    [ForeignKey("idMatiere")]
+    public Matiere? Matiere { get; set; }
     
-    [ForeignKey("num_trimestre")]
-    public Trimestre trimestres { get; set; }
+    [ForeignKey("idAnneeScolaire")]
+    public Periode? AnneeScolaire { get; set; }
 
 }
