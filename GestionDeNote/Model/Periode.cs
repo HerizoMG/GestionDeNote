@@ -5,13 +5,13 @@ namespace GestionDeNote.Model;
 public class Periode
 {   
     [Key]
-    public int idAnneeScolaire { get; set; }
+    public int idPeriode { get; set; }
     public int idAnnee { get; set; }
-    public int numTrimestre { get; set; }
+    public int idTrimestre { get; set; }
     
     [ForeignKey("idAnnee")]
     public Annee? Annee { get; set; }
     
-    [ForeignKey("numTrimestre")]
+    [ForeignKey("idTrimestre")]
     public Trimestre? Trimestre { get; set; }
 }

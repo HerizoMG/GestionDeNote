@@ -23,8 +23,9 @@ public class EtudiantController : ControllerBase
         if (_context.Etudiants != null)
         {
             var etudiants = _context.Etudiants
-                .Include(e=> e.Classe)
-                .Include(e=> e.Serie).ToList();
+                .Include(e=> e.Periode!.Annee)
+                .Include(e=> e.Periode!.Trimestre)
+                .Include(e=> e.Serie!.Classe).ToList();
             return Ok(etudiants);
         }
 
@@ -37,20 +38,20 @@ public class EtudiantController : ControllerBase
     [HttpPost("create")]
     public IActionResult CreateEtudiant(Etudiant etudiant)
     {
-        if (etudiant.Classe != null && !string.IsNullOrEmpty(etudiant.Classe.idClasse.ToString()))
+        if (etudiant.Serie != null && !string.IsNullOrEmpty(etudiant.Serie.idClasse.ToString()))
         {
-            _context.Attach(etudiant.Classe);
+            _context.Attach(etudiant.Serie);
         }
 
-        if (etudiant.Serie != null && !string.IsNullOrEmpty(etudiant.Serie.numSerie.ToString()))
+        if (etudiant.Serie != null && !string.IsNullOrEmpty(etudiant.Serie.idSerie.ToString()))
         {
             _context.Attach(etudiant.Serie);
         }
         _context.Etudiants?.Add(etudiant);
         _context.SaveChanges();
         return CreatedAtAction(nameof(GetEtudiant), new { id = etudiant.matricule});
-        
     }
+    
     //find 
     [HttpGet("{id}")]
     public IActionResult FindEtudiant(string id)
@@ -58,8 +59,9 @@ public class EtudiantController : ControllerBase
         if (_context.Etudiants != null)
         {
             var etudiant = _context.Etudiants
-                .Include(e=>e.Classe)
-                .Include(e=>e.Serie)
+                .Include(e=> e.Periode!.Annee)
+                .Include(e=> e.Periode!.Trimestre)
+                .Include(e=> e.Serie!.Classe)
                 .FirstOrDefault(e=>e.matricule == id);
         
             if (etudiant == null)
@@ -79,8 +81,9 @@ public class EtudiantController : ControllerBase
         if (_context.Etudiants != null)
         {
             var existEtudiant = await _context.Etudiants
-                .Include(e=>e.Classe)
-                .Include(e=>e.Serie)
+                .Include(e=> e.Periode!.Annee)
+                .Include(e=> e.Periode!.Trimestre)
+                .Include(e=> e.Serie!.Classe)
                 .FirstOrDefaultAsync(e=>e.matricule == id);
         
             if (existEtudiant==null)
@@ -91,9 +94,9 @@ public class EtudiantController : ControllerBase
             existEtudiant.nom = updateEtudiant.nom;
             existEtudiant.prenoms = updateEtudiant.prenoms;
             existEtudiant.adresse = updateEtudiant.adresse;
-            existEtudiant.mail = updateEtudiant.mail;
-            existEtudiant.numSerie = updateEtudiant.numSerie;
-            existEtudiant.idClasse = updateEtudiant.idClasse;
+            existEtudiant.email = updateEtudiant.email;
+            existEtudiant.idSerie = updateEtudiant.idSerie;
+            existEtudiant.idPeriode = updateEtudiant.idPeriode;
             await _context.SaveChangesAsync();
             return Ok(existEtudiant);
         }
@@ -107,7 +110,7 @@ public class EtudiantController : ControllerBase
         if (_context.Etudiants != null)
         {
             var etudiant = _context.Etudiants
-                .Include(e=>e.Classe)
+                .Include(e=>e.Periode)
                 .Include(e=>e.Serie)
                 .FirstOrDefault(e=>e.matricule == id);
             if (etudiant==null)

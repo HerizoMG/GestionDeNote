@@ -5,6 +5,6 @@ namespace GestionDeNote.Model;
 public class Trimestre
 {
     [Key]
-    public int numTrimestre { get; set; }
+    public int idTrimestre { get; set; }
     public string nomTrimestre { get; set; }
 }

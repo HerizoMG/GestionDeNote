@@ -9,14 +9,16 @@ public class Etudiant
     public string nom { get; set; }
     public string prenoms { get; set; }
     public string adresse { get; set; }
-    public string mail { get; set; }
-
-    public int idClasse { get; set; }
+    public string email { get; set; }
     
-    public int numSerie { get; set; }
-    [ForeignKey("numSerie")]
+    public int idSerie { get; set; }
+    
+    [ForeignKey("idSerie")]
     public Serie? Serie { get; set; }
-    [ForeignKey("idClasse")]
-    public Classe? Classe { get; set; }
+    
+    public int idPeriode { get; set; }
+    
+    [ForeignKey("idPeriode")]
+    public Periode? Periode { get; set; }
     
 }

@@ -27,7 +27,6 @@ public class NoteController : ControllerBase
             var noteEtudiant = _context.Notes
                 .Include(e => e.Etudiant)
                 .Include(n=>n.Matiere)
-                .Include(a=>a.AnneeScolaire)
                 .ToList();
             return Ok(noteEtudiant);
         }
@@ -63,7 +62,7 @@ public class NoteController : ControllerBase
         // Recherche de l'étudiant par numéro de matricule
         
         var etudiant =_context.Etudiants
-            .Include(e=>e.Classe)
+            .Include(e=>e.Periode)
             .Include(e=>e.Serie)
             .FirstOrDefault(e=>e.matricule == id);
         
@@ -81,7 +80,7 @@ public class NoteController : ControllerBase
             matricule = etudiant.matricule,
             idMatiere = notes.idMatiere,
             note = notes.note,
-            coefficient = notes.coefficient
+            coeff = notes.coeff
         };
         
         _context.Notes?.Add(note);
