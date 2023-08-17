@@ -64,8 +64,6 @@ public class EtudiantController : ControllerBase
         existEtudiant.prenoms = updateEtudiant.prenoms;
         existEtudiant.adresse = updateEtudiant.adresse;
         existEtudiant.mail = updateEtudiant.mail;
-        existEtudiant.Classe = updateEtudiant.Classe;
-        existEtudiant.Serie = updateEtudiant.Serie;
         _context.SaveChanges();
         return Ok(existEtudiant);
     }

@@ -5,6 +5,7 @@ namespace GestionDeNote.Model;
 public class Trimestre
 {
     [Key]
-    public string num_trimestre { get; set; }
-    public static Trimestre annee_scolaire { get; set; }
+    public string iDtrimestre { get; set; }
+    public string nom_trimestre { get; set; }
+    public static Trimestre annee { get; set; }
 }

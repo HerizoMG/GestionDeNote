@@ -72,7 +72,7 @@ public class PossedderController : ControllerBase
             num_matricule = etudiant.num_matricule,
             num_matiere = posseder.num_matiere,
             num_trimestre = posseder.num_trimestre,
-            trimestres = Trimestre.annee_scolaire,
+            trimestres = Trimestre.annee,
             note = posseder.note
         };
         

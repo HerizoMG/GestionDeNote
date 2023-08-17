@@ -6,6 +6,7 @@ namespace GestionDeNote.Model;
 public class Classe
 {
     [Key]
-    public string ID_classe { get; set; }
+    public int idClass { get; set; }
     public string niveau { get; set; }
+
 }

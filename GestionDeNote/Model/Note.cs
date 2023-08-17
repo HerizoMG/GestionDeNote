@@ -13,15 +13,12 @@ public class Note
     public string note { get; set; }
 
     [ForeignKey("num_matricule")]
-    
     public Etudiant etudiant { get; set; }
     
     [ForeignKey("num_matiere")]
-    
     public Matiere matiere { get; set; }
     
     [ForeignKey("num_trimestre")]
-    
     public Trimestre trimestres { get; set; }
 
 }
