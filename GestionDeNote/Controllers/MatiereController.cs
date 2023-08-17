@@ -22,7 +22,7 @@ public class MatiereController : ControllerBase
    [HttpGet]
    public ActionResult<IEnumerable<Matiere>>GetMatiere()
    {
-       if (_context.Posseders != null)
+       if (_context.Notes != null)
        {
            var matiere = _context.Matieres;
            return Ok(matiere);

@@ -21,8 +21,9 @@ public class EtudiantController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<Etudiant>> GetEtudiant()
     {
-        var etudiants = _context.Etudiants;
-
+        var etudiants = _context.Etudiants
+            .Include(e=> e.Classe)
+            .Include(e=> e.Serie).ToList();
         return Ok(etudiants);
     }
 
@@ -32,9 +33,18 @@ public class EtudiantController : ControllerBase
     [HttpPost("create")]
     public IActionResult CreateEtudiant(Etudiant etudiant)
     {
+        if (etudiant.Classe != null && !string.IsNullOrEmpty(etudiant.Classe.idClasse.ToString()))
+        {
+            _context.Attach(etudiant.Classe);
+        }
+
+        if (etudiant.Serie != null && !string.IsNullOrEmpty(etudiant.Serie.numSerie.ToString()))
+        {
+            _context.Attach(etudiant.Serie);
+        }
         _context.Etudiants.Add(etudiant);
         _context.SaveChanges();
-        return CreatedAtAction(nameof(GetEtudiant), new { id = etudiant.num_matricule});
+        return CreatedAtAction(nameof(GetEtudiant), new { id = etudiant.matricule});
         
     }
     //find 
@@ -64,8 +74,6 @@ public class EtudiantController : ControllerBase
         existEtudiant.prenoms = updateEtudiant.prenoms;
         existEtudiant.adresse = updateEtudiant.adresse;
         existEtudiant.mail = updateEtudiant.mail;
-        existEtudiant.Classe = updateEtudiant.Classe;
-        existEtudiant.Serie = updateEtudiant.Serie;
         _context.SaveChanges();
         return Ok(existEtudiant);
     }
@@ -78,13 +86,13 @@ public class EtudiantController : ControllerBase
         {
             return NotFound();
         }
-        var posseder = _context.Posseders
-            .Where(p => p.num_matricule.Contains(id)).ToList();
-        if (posseder==null)
+        var notes = _context.Notes
+            .Where(p => p.matricule.Contains(id)).ToList();
+        if (notes==null)
         {
             return NotFound();
         }
-        _context.Posseders.RemoveRange(posseder);
+        _context.Notes.RemoveRange(notes);
         _context.SaveChanges();
         _context.Etudiants.Remove(etudiant);
         _context.SaveChanges();

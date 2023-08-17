@@ -22,9 +22,9 @@ public class PossedderController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<Etudiant>> GetNoteEtudiant()
     {
-        if (_context.Posseders != null)
+        if (_context.Notes != null)
         {
-            var noteEtudiant = _context.Posseders.Include(e => e.trimestres).ToList();
+            var noteEtudiant = _context.Notes.Include(e => e.trimestres).ToList();
             return Ok(noteEtudiant);
         }
 
@@ -35,23 +35,23 @@ public class PossedderController : ControllerBase
     [HttpGet("{id}")]
     public IActionResult FindEtudiant(string id)
     {
-        var posseder = _context.Posseders
-            .Where(p => p.num_matricule.Contains(id) ||
-                        p.id_note.Contains(id));
-        if (posseder == null)
+        var notes = _context.Notes
+            .Where(p => p.matricule.Contains(id) ||
+                        p.idNote.ToString().Contains(id));
+        if (notes == null)
         {
             return NotFound();
         }
-        return Ok(posseder);
+        return Ok(notes);
         
     }
     
     
     
     [HttpPost("ajouterNote")]
-    public async Task<ActionResult> AjouterNotePourEtudiant(String id,[FromBody] Note? posseder)
+    public async Task<ActionResult> AjouterNotePourEtudiant(String id,[FromBody] Note? notes)
     {
-        if (posseder == null)
+        if (notes == null)
         {
             return BadRequest("Les données de la note ne peuvent pas être nulles.");
         }
@@ -68,31 +68,31 @@ public class PossedderController : ControllerBase
         
         var note = new Note
         {
-            id_note = posseder.id_note,
-            num_matricule = etudiant.num_matricule,
-            num_matiere = posseder.num_matiere,
-            num_trimestre = posseder.num_trimestre,
-            trimestres = Trimestre.annee_scolaire,
-            note = posseder.note
+            idNote = notes.idNote,
+            matricule = etudiant.matricule,
+            num_matiere = notes.num_matiere,
+            numTrimestre = notes.numTrimestre,
+            note = notes.note
         };
         
-        _context.Posseders?.Add(note);
+        _context.Notes?.Add(note);
         await _context.SaveChangesAsync();
 
-        return Ok("Note ajoutée avec succès pour l'étudiant avec le matricule " + posseder.num_matricule);
+        return Ok("Note ajoutée avec succès pour l'étudiant avec le matricule " + notes.matricule);
     }
     
     [HttpDelete("{id}")]
     public IActionResult DeletePosseder(string id)
     {
-        var posseder = _context.Posseders
-            .Where(p => p.num_matricule.Contains(id) || 
-                        p.id_note.Contains(id)).ToList();
+        var posseder = _context.Notes
+            .Where(p => p.matricule.Contains(id) || 
+                        p.idNote.ToString().Contains(id)
+            ).ToList();
         if (posseder==null)
         {
             return NotFound();
         }
-        _context.Posseders.RemoveRange(posseder);
+        _context.Notes.RemoveRange(posseder);
         _context.SaveChanges();
 
         return NoContent();

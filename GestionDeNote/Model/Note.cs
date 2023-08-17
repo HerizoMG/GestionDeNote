@@ -6,11 +6,13 @@ namespace GestionDeNote.Model;
 public class Note
 {
     [Key]
-    public string id_note { get; set; }
-    public string num_matricule { get; set; }
-    public string num_matiere { get; set; }
-    public string num_trimestre { get; set; }
-    public string note { get; set; }
+    public int idNote { get; set; }
+    public string matricule { get; set; }
+    public int num_matiere { get; set; }
+    
+    [ForeignKey("numTrimestre")]
+    public int numTrimestre { get; set; }
+    public double note { get; set; }
 
     [ForeignKey("num_matricule")]
     
