@@ -20,7 +20,7 @@ public class NoteController : ControllerBase
     
 
     [HttpGet]
-    public ActionResult<IEnumerable<Note>> GetNoteEtudiant()
+    public ActionResult<IEnumerable<Note>> GetNote()
     {
         if (_context.Notes != null)
         {
@@ -49,48 +49,65 @@ public class NoteController : ControllerBase
         
     }
     
+    private int GenererNextId()
+    {
+      var lastId = _context.Notes.OrderByDescending(n => n.idNote)
+          .Select(n => n.idNote)
+          .FirstOrDefault();
+      
+      if (lastId == null)
+      {
+          return 1;
+      }
+      return lastId + 1;
+    }
+    
     
     
     [HttpPost("ajouterNote")]
-    public async Task<ActionResult> AjouterNotePourEtudiant(String id,[FromBody] Note? notes)
+    public async Task<ActionResult> AjouterNote(Note notes)
     {
         if (notes == null)
         {
-            return BadRequest("Les données de la note ne peuvent pas être nulles.");
+            return BadRequest("Invalid Note data.");
         }
 
-        // Recherche de l'étudiant par numéro de matricule
-        
-        var etudiant =_context.Etudiants
-            .Include(e=>e.Periode)
-            .Include(e=>e.Serie)
-            .FirstOrDefault(e=>e.matricule == id);
-        
-        if (etudiant == null)
+        notes.idNote = GenererNextId();
+    
+        if (notes.Etudiant != null && !string.IsNullOrEmpty(notes.matricule))
         {
-            return NotFound("Étudiant non trouvé avec le matricule spécifié.");
+            _context.Attach(notes.Etudiant);
         }
-        
-        // Ajout de la note à l'étudiant
-
-        
-        var note = new Note
+    
+        if (notes.Matiere != null && !string.IsNullOrEmpty(notes.idMatiere.ToString()))
         {
-            idNote = notes.idNote,
-            matricule = etudiant.matricule,
-            idMatiere = notes.idMatiere,
-            note = notes.note,
-            coeff = notes.coeff
-        };
-        
-        _context.Notes?.Add(note);
-        await _context.SaveChangesAsync();
+            _context.Attach(notes.Matiere);
+        }
+    
+        if (_context.Notes != null)
+        {
+            _context.Notes.Add(notes);
+            await _context.SaveChangesAsync();
+            return Ok("Note ajoutée avec succès pour l'étudiant avec le matricule " + notes.matricule);
+        }
+        else
+        {
+            return BadRequest("Notes context is null.");
+        }
+    }
 
-        return Ok("Note ajoutée avec succès pour l'étudiant avec le matricule " + notes.matricule);
+
+    [HttpPut("update")]
+    public async Task<IActionResult> UpdateNote(string id, Note updateNote)
+    {
+        _context.Entry(updateNote).State = EntityState.Modified;
+        _context.SaveChanges();
+        return NoContent();
     }
     
+    
     [HttpDelete("{id}")]
-    public IActionResult DeletePosseder(string id)
+    public IActionResult DeleteNote(string id)
     {
         var posseder = _context.Notes
             .Where(p => p.matricule.Contains(id) || 

@@ -8,7 +8,6 @@ public class Note
     [Key]
     public int idNote { get; set; }
     public double note { get; set; }
-    public int coeff { get; set; }
     public String matricule { get; set; }
     public int idMatiere { get; set; }
     

@@ -17,7 +17,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Matiere>? Matieres { get; set; }
     public DbSet<Annee>? Annees { get; set; }
     public DbSet<Periode>? Periodes { get; set; }
-    public DbSet<Coefficient>? Coefficient { get; set; }
+    public DbSet<Coefficient>? Coefficients { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

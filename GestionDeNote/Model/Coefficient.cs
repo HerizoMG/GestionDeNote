@@ -9,7 +9,7 @@ public class Coefficient
     public int idCoeff { get; set; }
     public int coeff { get; set; }
     public int idSerie { get; set; }
-    public string idMatiere { get; set; }
+    public int idMatiere { get; set; }
 
 
     [ForeignKey("idSerie")]
