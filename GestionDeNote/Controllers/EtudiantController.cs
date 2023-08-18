@@ -31,9 +31,6 @@ public class EtudiantController : ControllerBase
 
         return NoContent();
     }
-
-
-    
     //create
     [HttpPost("create")]
     public IActionResult CreateEtudiant(Etudiant etudiant)
