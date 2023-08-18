@@ -32,12 +32,30 @@ public class EtudiantController : ControllerBase
         return NoContent();
     }
 
+    private string GenererNextId()
+    {
+        var lastId = _context.Etudiants.OrderByDescending(n => n.matricule)
+            .Select(n => n.matricule)
+            .FirstOrDefault();
+      
+        if (lastId == null)
+        {
+            return "001";
+        }
 
+        int lastNumber = int.Parse(lastId);
+        string nexNumber = (lastNumber + 1).ToString("D3");
+        string nextId = nexNumber;
+        return nextId;
+    }
     
     //create
     [HttpPost("create")]
     public IActionResult CreateEtudiant(Etudiant etudiant)
     {
+
+        etudiant.matricule = GenererNextId();
+        
         if (etudiant.Serie != null && !string.IsNullOrEmpty(etudiant.Serie.idClasse.ToString()))
         {
             _context.Attach(etudiant.Serie);
