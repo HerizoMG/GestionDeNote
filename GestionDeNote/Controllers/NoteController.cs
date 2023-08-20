@@ -1,5 +1,6 @@
 using GestionDeNote.Data;
 using GestionDeNote.Model;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,6 +35,22 @@ public class NoteController : ControllerBase
         throw new InvalidOperationException();
     }
     
+    [HttpGet("idMatiere")]
+    public ActionResult<IEnumerable<Note>> GetNoteByMatiere(int idMatiere)
+    {
+        if (_context.Notes != null)
+        {
+            var noteEtudiant = _context.Notes
+                .Include(e => e.Etudiant)
+                .Include(n=>n.Matiere)
+                .Where(m => m.idMatiere == idMatiere)
+                .ToList();
+            return Ok(noteEtudiant);
+        }
+
+        throw new InvalidOperationException();
+    }
+    
     
     [HttpGet("{id}")]
     public IActionResult FindEtudiant(string id)
@@ -46,7 +63,6 @@ public class NoteController : ControllerBase
             return NotFound();
         }
         return Ok(notes);
-        
     }
     
     private int GenererNextId()
@@ -86,9 +102,20 @@ public class NoteController : ControllerBase
     
         if (_context.Notes != null)
         {
-            _context.Notes.Add(notes);
-            await _context.SaveChangesAsync();
-            return Ok("Note ajoutée avec succès pour l'étudiant avec le matricule " + notes.matricule);
+            // verifie s'il deja existé
+            List<Note> note = _context.Notes
+                .Where(m => m.matricule == notes.matricule &&
+                            m.idMatiere == notes.idMatiere ).ToList();
+            
+            if (note.Count() == 0)
+            {
+                _context.Notes?.Add(notes);
+                await _context.SaveChangesAsync();
+                return Ok("Note ajoutée avec succès pour l'étudiant avec le matricule " + notes.matricule);
+            }
+            
+            return BadRequest(note.Count());
+
         }
         else
         {

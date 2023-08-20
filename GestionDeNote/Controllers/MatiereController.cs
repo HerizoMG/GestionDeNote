@@ -33,6 +33,21 @@ public class MatiereController : ControllerBase
        throw new InvalidOperationException();
    }
    
+   [HttpGet("matiere")]
+   public ActionResult<IEnumerable<Matiere>>GetMatiereByID(int id)
+   {
+       if (_context.Notes != null)
+       {
+           var matiere = _context.Coefficients
+               .Include(c =>c.Matiere)
+               .Include(c=>c.Serie)
+               .Where(m => m.Serie!.idClasse == id)
+               .ToList();
+           return Ok(matiere);
+       }
+       throw new InvalidOperationException();
+   }
+   
    [HttpPost("create")]
     public IActionResult CreateMatiere(Matiere matiere)
     {

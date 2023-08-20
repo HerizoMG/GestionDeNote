@@ -31,7 +31,79 @@ public class EtudiantController : ControllerBase
 
         return NoContent();
     }
+    
+    [HttpGet("seconde")]
+    public ActionResult<IEnumerable<Etudiant>> GetEtudiantSeconde()
+    {
+        if (_context.Etudiants != null)
+        {
+            var etudiants = _context.Etudiants
+                .Include(e=> e.Periode!.Annee)
+                .Include(e=> e.Periode!.Trimestre)
+                .Include(e=> e.Serie!.Classe)
+                .Where(e => e.Serie!.Classe!.idClasse == 1)
+                .ToList();
+            return Ok(etudiants);
+        }
 
+        return NoContent();
+    }
+    
+    
+    [HttpGet("terminale")]
+    public ActionResult<IEnumerable<Etudiant>> GetEtudiantTerminale(int id)
+    {
+        if (_context.Etudiants != null)
+        {
+            var etudiants = _context.Etudiants
+                .Include(e=> e.Periode!.Annee)
+                .Include(e=> e.Periode!.Trimestre)
+                .Include(e=> e.Serie!.Classe)
+                .Where(e => (e.Serie!.Classe!.idClasse == 3 && 
+                             e.idSerie == id))
+                .ToList();
+            return Ok(etudiants);
+        }
+
+        return NoContent();
+    }
+    
+    [HttpGet("premiereL")]
+    public ActionResult<IEnumerable<Etudiant>> GetEtudiantPremiereL()
+    {
+        if (_context.Etudiants != null)
+        {
+            var etudiants = _context.Etudiants
+                .Include(e=> e.Periode!.Annee)
+                .Include(e=> e.Periode!.Trimestre)
+                .Include(e=> e.Serie!.Classe)
+                .Where(e => (e.Serie!.Classe!.idClasse == 2 && 
+                             e.idSerie ==  3))
+                .ToList();
+            return Ok(etudiants);
+        }
+
+        return NoContent();
+    }
+    
+    [HttpGet("premiereS")]
+    public ActionResult<IEnumerable<Etudiant>> GetEtudiantPremiereS()
+    {
+        if (_context.Etudiants != null)
+        {
+            var etudiants = _context.Etudiants
+                .Include(e=> e.Periode!.Annee)
+                .Include(e=> e.Periode!.Trimestre)
+                .Include(e=> e.Serie!.Classe)
+                .Where(e => (e.Serie!.Classe!.idClasse == 2 && 
+                             e.idSerie ==  2))
+                .ToList();
+            return Ok(etudiants);
+        }
+
+        return NoContent();
+    }
+    
     private string GenererNextId()
     {
         var lastId = _context.Etudiants.OrderByDescending(n => n.matricule)
@@ -67,7 +139,7 @@ public class EtudiantController : ControllerBase
         }
         _context.Etudiants?.Add(etudiant);
         _context.SaveChanges();
-        return CreatedAtAction(nameof(GetEtudiant), new { id = etudiant.matricule});
+        return CreatedAtAction(nameof(GetEtudiant), new { name = etudiant.nom + " " + etudiant.prenoms});
     }
     
     //find 
