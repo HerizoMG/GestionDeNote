@@ -47,6 +47,72 @@ public class EtudiantController : ControllerBase
         return NoContent();
     }
     
+    [HttpGet("classes/{idClasse}/trimestres/{idTrimestre}")]
+    public IActionResult GetMoyenneGeneraleParClasse(int idClasse, int idTrimestre)
+    {
+        var moyennesParClasse = _context.Etudiants
+            .Where(e => e.Serie.idClasse == idClasse)
+            .GroupBy(e => e.Serie.idClasse)
+            .Select(g => new
+            {
+                Classe = _context.Classes.FirstOrDefault(c => c.idClasse == idClasse).niveau,
+                MoyenneGenerale = g.SelectMany(s => _context.Notes
+                                          .Where(n => n.matricule == s.matricule && n.Etudiant.Serie.idClasse == idClasse && n.Periode.idTrimestre == idTrimestre)
+                                          .Select(n => n.note * _context.Coefficients.FirstOrDefault(c => c.idMatiere == n.idMatiere && c.idSerie == s.idSerie).coeff))
+                                      .Sum() /
+                                  g.SelectMany(s => _context.Notes
+                                          .Where(n => n.matricule == s.matricule && n.Etudiant.Serie.idClasse == idClasse && n.Periode.idTrimestre == idTrimestre)
+                                          .Select(n => _context.Coefficients.FirstOrDefault(c => c.idMatiere == n.idMatiere && c.idSerie == s.idSerie).coeff))
+                                      .Sum()
+            })
+            .ToList();
+
+        if (moyennesParClasse.Count == 0)
+        {
+            return NotFound();
+        }
+
+        return Ok(moyennesParClasse);
+    }
+
+    
+    [HttpGet("classes/etudiants")]
+    public IActionResult GetNombreEtudiantsParClasse()
+    {
+        var classes = _context.Classes.ToList();
+
+        var nomsClasses = classes.Select(c => c.niveau).ToList();
+
+        var nombresEtudiants = classes.Select(c => _context.Etudiants
+                .Where(e => e.Serie.idClasse == c.idClasse)
+                .Count())
+            .ToList();
+
+        var resultat = new
+        {
+            NomsClasses = nomsClasses,
+            NombresEtudiants = nombresEtudiants
+        };
+
+        return Ok(resultat);
+    }
+
+    
+    [HttpGet("series/{idSerie}/etudiants")]
+    public IActionResult GetEtudiantsBySerie(int idSerie)
+    {
+        var etudiants = _context.Etudiants
+            .Where(e => e.idSerie == idSerie)
+            .ToList();
+
+        if (etudiants.Count == 0)
+        {
+            return NotFound();
+        }
+
+        return Ok(etudiants);
+    }
+
     
     [HttpGet("terminale")]
     public ActionResult<IEnumerable<Etudiant>> GetEtudiantTerminale(int id)

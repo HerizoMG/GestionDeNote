@@ -96,6 +96,7 @@ public class NoteController : ControllerBase
                                  g.Sum(n => _context.Coefficients.FirstOrDefault(c => c.idMatiere == n.idMatiere && c.idSerie == idSerie).coeff))
                     .FirstOrDefault()
             })
+            .OrderByDescending(e => e.moyenne)
             .ToList();
 
         if (moyennes.Count == 0)
