@@ -15,10 +15,4 @@ public class Etudiant
     
     [ForeignKey("idSerie")]
     public Serie? Serie { get; set; }
-    
-    public int idPeriode { get; set; }
-    
-    [ForeignKey("idPeriode")]
-    public Periode? Periode { get; set; }
-    
 }

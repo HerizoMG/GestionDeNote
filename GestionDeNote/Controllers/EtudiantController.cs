@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using GestionDeNote.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,13 +19,12 @@ public class EtudiantController : ControllerBase
     }
 
     [HttpGet]
+    [SuppressMessage("ReSharper.DPA", "DPA0009: High execution time of DB command", MessageId = "time: 983ms")]
     public ActionResult<IEnumerable<Etudiant>> GetEtudiant()
     {
         if (_context.Etudiants != null)
         {
             var etudiants = _context.Etudiants
-                .Include(e=> e.Periode!.Annee)
-                .Include(e=> e.Periode!.Trimestre)
                 .Include(e=> e.Serie!.Classe).ToList();
             return Ok(etudiants);
         }
@@ -38,8 +38,6 @@ public class EtudiantController : ControllerBase
         if (_context.Etudiants != null)
         {
             var etudiants = _context.Etudiants
-                .Include(e=> e.Periode!.Annee)
-                .Include(e=> e.Periode!.Trimestre)
                 .Include(e=> e.Serie!.Classe)
                 .Where(e => e.Serie!.Classe!.idClasse == 1)
                 .ToList();
@@ -56,8 +54,6 @@ public class EtudiantController : ControllerBase
         if (_context.Etudiants != null)
         {
             var etudiants = _context.Etudiants
-                .Include(e=> e.Periode!.Annee)
-                .Include(e=> e.Periode!.Trimestre)
                 .Include(e=> e.Serie!.Classe)
                 .Where(e => (e.Serie!.Classe!.idClasse == 3 && 
                              e.idSerie == id))
@@ -74,8 +70,6 @@ public class EtudiantController : ControllerBase
         if (_context.Etudiants != null)
         {
             var etudiants = _context.Etudiants
-                .Include(e=> e.Periode!.Annee)
-                .Include(e=> e.Periode!.Trimestre)
                 .Include(e=> e.Serie!.Classe)
                 .Where(e => (e.Serie!.Classe!.idClasse == 2 && 
                              e.idSerie ==  3))
@@ -92,8 +86,6 @@ public class EtudiantController : ControllerBase
         if (_context.Etudiants != null)
         {
             var etudiants = _context.Etudiants
-                .Include(e=> e.Periode!.Annee)
-                .Include(e=> e.Periode!.Trimestre)
                 .Include(e=> e.Serie!.Classe)
                 .Where(e => (e.Serie!.Classe!.idClasse == 2 && 
                              e.idSerie ==  2))
@@ -149,8 +141,6 @@ public class EtudiantController : ControllerBase
         if (_context.Etudiants != null)
         {
             var etudiant = _context.Etudiants
-                .Include(e=> e.Periode!.Annee)
-                .Include(e=> e.Periode!.Trimestre)
                 .Include(e=> e.Serie!.Classe)
                 .FirstOrDefault(e=>e.matricule == id);
         
@@ -171,8 +161,6 @@ public class EtudiantController : ControllerBase
         if (_context.Etudiants != null)
         {
             var existEtudiant = await _context.Etudiants
-                .Include(e=> e.Periode!.Annee)
-                .Include(e=> e.Periode!.Trimestre)
                 .Include(e=> e.Serie!.Classe)
                 .FirstOrDefaultAsync(e=>e.matricule == id);
         
@@ -186,7 +174,6 @@ public class EtudiantController : ControllerBase
             existEtudiant.adresse = updateEtudiant.adresse;
             existEtudiant.email = updateEtudiant.email;
             existEtudiant.idSerie = updateEtudiant.idSerie;
-            existEtudiant.idPeriode = updateEtudiant.idPeriode;
             await _context.SaveChangesAsync();
             return Ok(existEtudiant);
         }
@@ -200,7 +187,6 @@ public class EtudiantController : ControllerBase
         if (_context.Etudiants != null)
         {
             var etudiant = _context.Etudiants
-                .Include(e=>e.Periode)
                 .Include(e=>e.Serie)
                 .FirstOrDefault(e=>e.matricule == id);
             if (etudiant==null)

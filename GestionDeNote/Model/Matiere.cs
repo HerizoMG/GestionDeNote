@@ -9,5 +9,4 @@ public class Matiere
     public int idMatiere { get; set; }
     public string nomMatiere { get; set; }
     
-
 }

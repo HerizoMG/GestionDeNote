@@ -34,14 +34,14 @@ public class MatiereController : ControllerBase
    }
    
    [HttpGet("matiere")]
-   public ActionResult<IEnumerable<Matiere>>GetMatiereByID(int id)
+   public ActionResult<IEnumerable<Matiere>>GetMatiereById(int idSerie)
    {
        if (_context.Notes != null)
        {
            var matiere = _context.Coefficients
                .Include(c =>c.Matiere)
                .Include(c=>c.Serie)
-               .Where(m => m.Serie!.idClasse == id)
+               .Where(m => m.Serie!.idSerie == idSerie)
                .ToList();
            return Ok(matiere);
        }
